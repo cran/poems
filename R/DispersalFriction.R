@@ -15,6 +15,7 @@
 #' reducing the effective dispersal range.
 #'
 #' @examples
+#' \dontrun{
 #' #' U Island example region
 #' coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
 #'                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -40,6 +41,7 @@
 #'       multiplier = multipliers[[1]])
 #'
 #' #' Note that crossing the water is avoided.
+#' }
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar%
