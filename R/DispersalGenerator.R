@@ -17,7 +17,6 @@
 #' \emph{dispersal_data} will be a temporal list of changing dispersal rates.
 #'
 #' @examples
-#' \dontrun{
 #' # U Island example region
 #' coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
 #'                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -36,9 +35,11 @@
 #' dispersal_gen$calculate_distance_data() # pre-calculate
 #' dispersal_gen$generate(input_values = list(dispersal_p = 0.5,
 #'                                            dispersal_b = 700))
-#' }
 #'
 #' @importFrom R6 R6Class
+#' @importFrom geosphere distm
+#' @importFrom geosphere distGeo
+#' @import raster
 #' @include Generator.R
 #' @include DispersalTemplate.R
 #' @export DispersalGenerator
@@ -187,7 +188,7 @@ DispersalGenerator <- R6Class("DispersalGenerator",
         }
         if (!self$region$use_raster || (is.logical(use_longlat) && use_longlat) ||
             length(grep("longlat", as.character(raster::crs(self$region$region_raster)), fixed = TRUE)) > 0) {
-          return(geosphere::distm(coordinates, coordinates, fun = geosphere::distGeo)/self$distance_scale)
+          return(distm(coordinates, coordinates, fun = distGeo)/self$distance_scale)
         } else { # assume coordinates in meters
           if (is.na(raster::crs(self$region$region_raster))) {
             warning("No coordinate reference system (CRS) specified: assuming coordinates are in meters", call. = FALSE)

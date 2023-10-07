@@ -6,7 +6,6 @@
 #' re-generated \code{\link{Generator}} outputs.
 #'
 #' @examples
-#' \dontrun{
 #' # U Island example region
 #' coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
 #'                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -43,9 +42,9 @@
 #'                                "all$extinction_location", # only defined for all
 #'                                "harvested", "all$harvested",
 #'                                "occupancy", "all$occupancy"))
-#' }
 #'
 #' @importFrom R6 R6Class
+#' @importFrom trend sens.slope
 #' @include SimulationResults.R
 #' @export PopulationResults
 
@@ -394,18 +393,18 @@ PopulationResults <- R6Class("PopulationResults",
               private$.abundance_trend <- array(NA, ncol(as.matrix(abundance))) # single or replicates
               for (i in 1:ncol(as.matrix(abundance))) {
                 if (is.numeric(self$trend_interval) && min(self$trend_interval) >= 1 && max(self$trend_interval) <= nrow(as.matrix(abundance))) {
-                  private$.abundance_trend[i] <- as.numeric(trend::sens.slope(as.matrix(abundance)[self$trend_interval, i])$estimates)
+                  private$.abundance_trend[i] <- as.numeric(sens.slope(as.matrix(abundance)[self$trend_interval, i])$estimates)
                 } else {
-                  private$.abundance_trend[i] <- as.numeric(trend::sens.slope(as.matrix(abundance)[, i])$estimates)
+                  private$.abundance_trend[i] <- as.numeric(sens.slope(as.matrix(abundance)[, i])$estimates)
                 }
               }
             } else { # individual populations
               private$.abundance_trend <- array(NA, nrow(as.matrix(abundance))) # populations
               for (i in 1:nrow(as.matrix(abundance))) {
                 if (is.numeric(self$trend_interval) && min(self$trend_interval) >= 1 && max(self$trend_interval) <= ncol(as.matrix(abundance))) {
-                  private$.abundance_trend[i] <- as.numeric(trend::sens.slope(as.matrix(abundance)[i, self$trend_interval])$estimates)
+                  private$.abundance_trend[i] <- as.numeric(sens.slope(as.matrix(abundance)[i, self$trend_interval])$estimates)
                 } else {
-                  private$.abundance_trend[i] <- as.numeric(trend::sens.slope(as.matrix(abundance)[i,])$estimates)
+                  private$.abundance_trend[i] <- as.numeric(sens.slope(as.matrix(abundance)[i,])$estimates)
                 }
               }
             }

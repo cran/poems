@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -11,20 +11,20 @@ SAMPLES <- 20000
 PARALLEL_CORES <- 2
 OUTPUT_DIR <- tempdir()
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Raster of Tasmania (note: islands removed where there was no evidence of thylacine occupancy).
 raster::plot(poems::tasmania_raster, main = "Tasmania raster",
              xlab = "Longitude (degrees)", ylab = "Latitude (degrees)",
              colNA = "blue")
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Tasmania study region (795 cells stored in the order shown)
 region <- Region$new(template_raster = tasmania_raster)
 raster::plot(region$region_raster, main = "Tasmanian study region (cell indices)",
              xlab = "Longitude (degrees)", ylab = "Latitude (degrees)",
              colNA = "blue")
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Tasmania study Interim Bioregionalisation of Australia (IBRA) bioregion cell distribution
 ibra_raster <- poems::tasmania_ibra_raster
 raster::plot(ibra_raster, main = "Tasmania study IBRA bioregions", colNA = "blue",
@@ -41,7 +41,7 @@ ibra_indices[1:2] # examine
 ibra_cells <- unlist(lapply(ibra_indices, length))
 ibra_cells # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Build the dispersal generator and calculate distance data
 dispersal_gen <- DispersalGenerator$new(
   region = region,
@@ -53,7 +53,7 @@ dispersal_gen <- DispersalGenerator$new(
 dispersal_gen$calculate_distance_data()
 head(dispersal_gen$distance_data$base) # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Define neighborhoods (of up to 9 adjacent cells) based on a 14 km range from each 
 # grid cell for density dependence calculations (using a dispersal generator)
 distance_data <- dispersal_gen$distance_data[[1]]
@@ -65,7 +65,7 @@ for (i in 1:nrow(nh_data)) {
 }
 neighborhoods[1:3] # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # User-defined function for Ricker logistic density dependence via neighborhoods, with
 # Allee effects; also remove fecundities if single thylacine in a neighborhood
 density_dependence <- list(
@@ -105,7 +105,7 @@ density_dependence <- list(
 )
 density_aliases <- list(density_allee = "density_dependence$allee")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Harvest bounty (economic) model user-defined function adapted from Bulte et al. (2003).
 harvest <- list(
 
@@ -179,7 +179,7 @@ harvest_aliases <- list(harvest_ohr = "harvest$ohr", harvest_fb = "harvest$fb",
                         harvest_q = "harvest$q", harvest_v1 = "harvest$v1",
                         harvest_v2 = "harvest$v2")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Population (simulation) model template for fixed parameters
 model_template <- PopulationModel$new(
   region = region,
@@ -199,13 +199,13 @@ model_template <- PopulationModel$new(
   results_selection = c("abundance", "harvested"),
   attribute_aliases = c(density_aliases, harvest_aliases))
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Initial thylacine habitat suitability
 hs_raster <- poems::thylacine_hs_raster
 raster::plot(hs_raster, main = "Initial thylacine habitat suitability", colNA = "blue",
              xlab = "Longitude (degrees)", ylab = "Latitude (degrees)")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Build a carrying capacity generator model based on habitat suitability and sampled
 # initial capacity, initial fraction (phi), & decline rate per year in selected bioregions.
 capacity_gen <- Generator$new(
@@ -245,7 +245,7 @@ capacity_gen$add_function_template(
   call_params = c("initial_hs", "time_steps", "decline_indices",
                   "k_init", "k_decline"))
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Generate example initial abundance and declining carrying capacity time-series
 generated_k <- capacity_gen$generate(input_values = list(k_init = 2800,
                                                          k_decline = 0.04,
@@ -266,7 +266,7 @@ raster::plot(example_final_raster, main = "Final thylacine carrying capacity",
              colNA = "blue",  xlab = "Longitude (degrees)", ylab = "Latitude (degrees)", 
              zlim = c(0, 8))
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Build a stage matrix generator based on sampled growth rate
 stage_matrix_gen <- Generator$new(
   description = "stage matrix",
@@ -284,18 +284,18 @@ stage_matrix_gen$add_function_template(
   },
   call_params = c("base_matrix", "growth_r"))
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Generate sampled stage matrix for growth rate: lambda = 1.25
 gen_stage_m <- stage_matrix_gen$generate(input_values = list(growth_r = 0.25))
 gen_stage_m # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Generate sampled dispersals for p = 0.5, b = 7 (km)
 sample_dispersal_data <- dispersal_gen$generate(
   input_values = list(dispersal_p = 0.5, dispersal_b = 7))$dispersal_data
 head(sample_dispersal_data[[1]]) # examine
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Run the model with example parameters
 model <- model_template$clone()
 model$set_attributes(initial_abundance = example_initial_abundance,
@@ -312,7 +312,7 @@ lines(x = 1888:1967, y = results$all$harvested, lty = 1, col = "blue", lwd = 2)
 legend("topright", legend = c("Population size", "Simulated harvest"),
        col = c("green", "blue"), lty = c(1, 1), lwd = 2, cex = 0.8)
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Create a LHS object
 lhs_gen <- LatinHypercubeSampler$new()
 
@@ -343,7 +343,7 @@ sample_data <- lhs_gen$generate_samples(number = SAMPLES, random_seed = 123)
 head(sample_data) # examine
 dim(sample_data) # dimensions
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Build the simulation manager
 sim_manager <- SimulationManager$new(
   sample_data = sample_data,
@@ -363,7 +363,7 @@ if (DEMONSTRATION) {
 }
 dir(OUTPUT_DIR, "*.txt") # plus simulation log
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Load our results (list) into a PopulationResults object
 p_results <- PopulationResults$new(results = results,
                                    ibra_indices = ibra_indices)
@@ -381,7 +381,7 @@ ibra_abundance_clone <- p_results$new_clone(results = list(abundance = ibra_abun
 (1888:1967)[ibra_abundance_clone$extirpation] # IBRA extirpation
 (1888:1967)[p_results$all$extirpation] # total extinction
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Set targets for our summary metrics (used to calculate combined metric errors)
 slope_intervals <- c("1888-1894", "1895-1901", "1902-1909")
 targets <- list(
@@ -473,7 +473,7 @@ lapply(summary_matrix_list, dim) # dimensions
 head(summary_matrix_list$bounty_slope) # examine
 head(summary_matrix_list$ibra_extirpation) # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Demonstrate calculating RMSE metrics from matrices 
 if (DEMONSTRATION) { # Calculate RMSE for bounty slopes
   bounty_slope_error2 <- sqrt(rowMeans((summary_matrix_list$bounty_slope - 
@@ -509,7 +509,7 @@ summary_metric_data$total_extinction_error <-
      (extinct > target_CI[2])*(extinct - target_CI[2]))
 head(summary_metric_data) # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Create a validator for selecting the 'best' example models
 validator <- Validator$new(
   simulation_parameters = sample_data,
@@ -530,7 +530,7 @@ dim(validator$selected_simulations) # dimensions
 selected_indices <- validator$selected_simulations$index
 selected_weights <- validator$selected_simulations$weight
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Load pre-generated example matrices
 if (DEMONSTRATION) {
   summary_matrix_list <- poems::thylacine_example_matrices
@@ -554,7 +554,7 @@ graphics::points(x = 1:3, y = targets$bounty_slope, col = "red", pch = 15)
 legend("topright", c("All", "Target", "Selected"), fill = c("gray", "red", "blue"), 
        border = NA, cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 10----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 10----
 # Plot the simulation, targets, and selected metrics for extirpation
 extirpation <- cbind(summary_matrix_list$ibra_extirpation, 
                      summary_metric_data$total_extinction)
@@ -579,7 +579,7 @@ graphics::lines(x = targets$total_extinction, y = c(1, 1), col = "red", lwd = 2)
 legend("topright", c("All", "Target (CI)", "Selected"), fill = c("gray", "red", "blue"), 
        border = NA, cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Allee effect
 hist(sample_data$density_allee, breaks = 30, main = "Model ensemble Allee effect", 
      xlab = "Allee effect", ylim = c(0, 1000), col = "gray", yaxt = "n")
@@ -592,7 +592,7 @@ hist(sample_data$harvest_q, breaks = 30, main = "Model ensemble harvest catchabi
 hist(rep(sample_data$harvest_q[selected_indices], 20), breaks = 20, col = "blue", add = TRUE)
 legend("topright", c("All", "Selected"), fill = c("gray", "blue"), cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 7----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 7-----
 plot(x = sample_data$harvest_ohr, y = sample_data$harvest_q, ylim = c(0, 0.0055),
      xlab = "Opportunistic harvest rate", ylab = "Bio-economic harvest catchability",
      main = "Opportunistic harvest vs. catchability", col = "gray")
@@ -601,7 +601,7 @@ points(x = sample_data$harvest_ohr[selected_indices],
 graphics::legend("topright", legend = c("All samples", "Selected"),
                  col = c("gray", "blue"), pch = c(1, 3), cex = 0.8)
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Run replicates of 10 for each selected model
 sample_data_rerun <- cbind(sample = 1:nrow(sample_data), sample_data)
 sample_data_rerun <- cbind(sample_data_rerun[rep(selected_indices, each = 10),],
@@ -643,7 +643,7 @@ head(summary_metric_data_rerun) # examine
 dim(summary_metric_data_rerun) # dimensions
 lapply(summary_matrix_list_rerun, dim) # dimensions
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Bounty slope error
 bounty_slope_error <- summary_metric_data$bounty_slope_error
 hist(bounty_slope_error, breaks = 140, main = "Thylacine bounty slope error",
@@ -686,7 +686,7 @@ lines(x = rep(1937, 2), y = c(0, 10000), col = "red", lwd = 2)
 legend("topleft", c("All", "(persistent/10)", "Target (CI)", "Selected", "Replicates"),
        fill = c("gray", "gray40", "red", "blue", "gold3"), cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Compare weighted ensemble model to actual historical bounty time-series
 historic_bounty <- poems::thylacine_bounty_record
 selected_bounty <- summary_matrix_list$total_bounty
@@ -700,7 +700,7 @@ lines(x = 1888:1909, y = historic_bounty$Total, lty = 1, col = "red", lwd = 2)
 legend("topright", legend = c("Model ensemble bounty", "Actual bounty"),
        col = c("blue", "red"), lty = c(1, 1), lwd = 2, cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5-----
 # Compare weighted ensemble model to actual historical bioregion bounty values
 selected_bounty <- cbind(summary_matrix_list$ibra_bounty, 
                          rowSums(summary_matrix_list$ibra_bounty))
@@ -716,7 +716,7 @@ barplot(combined_bounty, xlab = "IBRA bioregion/Tasmania-wide total", beside = T
 legend("topleft", c("Model ensemble bounty", "Actual bounty", "Note: Total/2"), 
        fill = c("blue", "red", NA), border = NA, cex = 0.8)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5-----
 # Calculate the weighted cell extirpation dates
 selected_extirp <- summary_matrix_list$extirpation
 weighted_extirpation <- colSums(selected_extirp*selected_weights/sum(selected_weights))

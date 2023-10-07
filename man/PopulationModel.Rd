@@ -13,7 +13,6 @@ parameters. Also provided are extensions to the methods for checking the consist
 and completeness of model parameters.
 }
 \examples{
-\dontrun{
 # U Island example region
 coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -47,7 +46,6 @@ nested_model$carrying_capacity <- array(70:1, c(7, 10))
 nested_model$is_consistent()
 nested_model$is_complete()
 nested_model$harvest$rate
-}
 
 }
 \section{Super classes}{
@@ -81,7 +79,7 @@ nested_model$harvest$rate
 
 \item{\code{populations}}{Number of population cells.}
 
-\item{\code{stages}}{Number of lifecycle stages.}
+\item{\code{stages}}{Number of life cycle stages.}
 
 \item{\code{initial_abundance}}{Array (matrix) or raster (stack) of initial abundance values at each population cell (for each age/stage).}
 
@@ -122,6 +120,8 @@ nested_model$harvest$rate
 \item{\code{dispersal_target_k}}{Simulator-dependent attribute for describing/parameterizing dispersal dependent on target population carrying capacity (see \code{\link{population_simulator}}).}
 
 \item{\code{dispersal_target_n}}{Simulator-dependent attribute (default is list with \emph{threshold} and \emph{cutoff}) of attributes for describing/parameterizing dispersal dependent on target population abundance (see \code{\link{population_simulator}}).}
+
+\item{\code{dispersal_target_n_k}}{Simulator-dependent attribute (default is list with \emph{threshold} and \emph{cutoff}) of attributes for describing/parameterizing dispersal dependent on target population abundance/capacity (see \code{\link{population_simulator}}).}
 
 \item{\code{abundance_threshold}}{Abundance threshold (that needs to be exceeded) for each population to persist.}
 

@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
 library(poems)
 OUTPUT_DIR <- tempdir()
 
-## ---- message = FALSE, fig.align = "center", fig.width = 4, fig.height = 4----
+## ----message = FALSE, fig.align = "center", fig.width = 4, fig.height = 4-----
 # Demonstration example region (U Island)
 coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -19,19 +19,19 @@ raster::plot(region$region_raster, main = "Example region (cell indices)",
              xlab = "Longitude (degrees)", ylab = "Latitude (degrees)",
              colNA = "blue")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Distance-based environmental correlation (via a compacted Cholesky decomposition)
 env_corr <- SpatialCorrelation$new(region = region, amplitude = 0.4, breadth = 500)
 correlation <- env_corr$get_compact_decomposition(decimals = 2)
 correlation # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # User-defined harvest function (list-nested) and alias
 harvest <- list(rate = NA, # sample later
                 function(params) round(params$stage_abundance*(1 - params$rate)))
 harvest_rate_alias <- list(harvest_rate = "harvest$rate")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Population (simulation) model template for fixed parameters
 stage_matrix <- matrix(c(0,   2.5, # Leslie/Lefkovitch matrix
                          0.8, 0.5), nrow = 2, ncol = 2, byrow = TRUE,
@@ -50,7 +50,7 @@ model_template <- PopulationModel$new(region = region,
                                       results_selection = c("abundance", "harvested"),
                                       attribute_aliases = harvest_rate_alias)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 4, fig.height = 4----
+## ----message = FALSE, fig.align = "center", fig.width = 4, fig.height = 4-----
 # Example habitat suitability
 example_hs <- c(0.8, 1, 0.7, 0.9, 0.6, 0.7, 0.8 )
 example_hs_raster <- region$region_raster
@@ -59,7 +59,7 @@ raster::plot(example_hs_raster, main = "Example habitat suitability",
              xlab = "Longitude (degrees)", ylab = "Latitude (degrees)",
              colNA = "blue")
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Initial abundance and carrying capacity generated via example habitat suitability
 capacity_gen <- Generator$new(description = "Capacity generator",
                               example_hs = example_hs, # template attached
@@ -80,7 +80,7 @@ capacity_gen$add_function_template("carrying_capacity",
                                    call_params = c("density_max", "example_hs"))
 capacity_gen$generate(input_values = list(initial_n = 500, density_max = 100)) # test
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Distance-based dispersal generator
 dispersal_gen <- DispersalGenerator$new(region = region,
                                         dispersal_max_distance = 3000, # in m
@@ -92,7 +92,7 @@ test_dispersal <- dispersal_gen$generate(input_values = list(dispersal_p = 0.5,
                                                              dispersal_b = 700))
 head(test_dispersal$dispersal_data[[1]])
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Generate sampled values for variable model parameters via LHS
 lhs_gen <- LatinHypercubeSampler$new()
 lhs_gen$set_uniform_parameter("growth_rate_max", lower = 0.4, upper = 0.6, decimals = 2)
@@ -104,7 +104,7 @@ lhs_gen$set_uniform_parameter("dispersal_b", lower = 400, upper = 1000, decimals
 sample_data <- lhs_gen$generate_samples(number = 12, random_seed = 123)
 sample_data # examine
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Create a simulation manager and run the sampled model simulations
 sim_manager <- SimulationManager$new(sample_data = sample_data,
                                      model_template = model_template,
@@ -116,7 +116,7 @@ run_output$summary
 dir(OUTPUT_DIR, "*.RData") # includes 12 result files 
 dir(OUTPUT_DIR, "*.txt") # plus simulation log
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 results_manager <- ResultsManager$new(simulation_manager = sim_manager,
                                       simulation_results = PopulationResults$new(),
                                       summary_metrics = c("trend_n", "total_h"),
@@ -137,7 +137,7 @@ dir(OUTPUT_DIR, "*.txt") # plus generation log
 results_manager$summary_metric_data
 results_manager$summary_matrix_list
 
-## ---- message = FALSE---------------------------------------------------------
+## ----message = FALSE----------------------------------------------------------
 # Create a validator for selecting the 'best' example models
 validator <- Validator$new(simulation_parameters = sample_data,
                            simulation_summary_metrics =
@@ -148,7 +148,7 @@ suppressWarnings(validator$run(tolerance = 0.25, output_diagnostics = TRUE))
 dir(OUTPUT_DIR, "*.pdf") # plus validation diagnostics (see abc library documentation)
 validator$selected_simulations # top 3 models (stable abundance and high harvest)
 
-## ---- message = FALSE, fig.align = "center", fig.width = 6, fig.height = 5----
+## ----message = FALSE, fig.align = "center", fig.width = 6, fig.height = 5-----
 # Plot the simulation, targets, and selected metrics
 graphics::plot(x = results_manager$summary_metric_data$total_h,
                y = results_manager$summary_metric_data$trend_n,

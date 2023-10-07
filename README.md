@@ -4,6 +4,13 @@
 # poems: Pattern-oriented ensemble modeling system (for spatially explicit populations)
 
 <!-- badges: start -->
+
+[![CRAN_status](https://www.r-pkg.org/badges/version/poems)](https://CRAN.R-project.org/package=poems)
+[![Download_count](https://cranlogs.r-pkg.org/badges/grand-total/poems)](https://CRAN.R-project.org/package=poems)
+[![Paper_doi](https://img.shields.io/badge/doi-10.1111/2041--210X.13720-orange.svg)](https://doi.org/10.1111/2041-210X.13720)
+[![Codecov test
+coverage](https://codecov.io/gh/GlobalEcologyLab/poems/branch/main/graph/badge.svg)](https://app.codecov.io/gh/GlobalEcologyLab/poems?branch=main)
+[![R-CMD-check](https://github.com/GlobalEcologyLab/poems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/GlobalEcologyLab/poems/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The poems package provides a framework of interoperable *R6* (Chang,
@@ -75,6 +82,7 @@ raster::plot(region$raster_from_values(initial_abundance),
 <img src="man/figures/README-example-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
+
 # Set population model
 pop_model <- PopulationModel$new(
   region = region,
@@ -93,47 +101,47 @@ results <- population_simulator(pop_model)
 results # examine
 #> $all
 #> $all$abundance
-#> [1] 1067 1107 1263 1327 1336
+#> [1] 1010 1181 1236 1359 1335
 #> 
 #> $all$abundance_stages
 #> $all$abundance_stages[[1]]
-#> [1] 652 662 754 820 744
+#> [1] 589 743 699 858 780
 #> 
 #> $all$abundance_stages[[2]]
-#> [1] 415 445 509 507 592
+#> [1] 421 438 537 501 555
 #> 
 #> 
 #> 
 #> $abundance
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]   52  124  154  177  193
-#> [2,]  100  149  195  180  191
-#> [3,]  129  153  159  179  173
-#> [4,]  152  145  167  168  183
-#> [5,]  219  169  202  204  216
-#> [6,]  205  172  186  210  180
-#> [7,]  210  195  200  209  200
+#> [1,]   54  101  155  192  188
+#> [2,]  106  158  175  209  171
+#> [3,]  127  127  157  173  197
+#> [4,]  172  202  185  212  210
+#> [5,]  190  222  200  177  182
+#> [6,]  171  177  186  205  185
+#> [7,]  190  194  178  191  202
 #> 
 #> $abundance_stages
 #> $abundance_stages[[1]]
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]   31   73   91  108  103
-#> [2,]   67   76  118  110  119
-#> [3,]   80   99  103  110  111
-#> [4,]  100   74  108   93   99
-#> [5,]  138   98  125  118  121
-#> [6,]  121  113  106  145   84
-#> [7,]  115  129  103  136  107
+#> [1,]   34   55   87  128  114
+#> [2,]   59  100   91  137  103
+#> [3,]   82   74   93  105  119
+#> [4,]   83  146   85  140  118
+#> [5,]  113  147  116  106  116
+#> [6,]  107   99  110  124   99
+#> [7,]  111  122  117  118  111
 #> 
 #> $abundance_stages[[2]]
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]   21   51   63   69   90
-#> [2,]   33   73   77   70   72
-#> [3,]   49   54   56   69   62
-#> [4,]   52   71   59   75   84
-#> [5,]   81   71   77   86   95
-#> [6,]   84   59   80   65   96
-#> [7,]   95   66   97   73   93
+#> [1,]   20   46   68   64   74
+#> [2,]   47   58   84   72   68
+#> [3,]   45   53   64   68   78
+#> [4,]   89   56  100   72   92
+#> [5,]   77   75   84   71   66
+#> [6,]   64   78   76   81   86
+#> [7,]   79   72   61   73   91
 raster::plot(region$raster_from_values(results$abundance[,5]),
              main = "Final abundance", xlab = "Longitude (degrees)", 
              ylab = "Latitude (degrees)", zlim = c(0, 300), colNA = "blue")
@@ -148,7 +156,7 @@ of *poems* can be found in the accompanying vignettes.
 
 Beaumont, M. A., Zhang, W., & Balding, D. J. (2002). ‘Approximate
 Bayesian computation in population genetics’. *Genetics*, vol. 162, no.
-4, pp, 2025–2035.
+4, pp, 2025–2035. <doi:10.1093/genetics/162.4.2025>
 
 Chang, W. (2020). ‘R6: Encapsulated Classes with Reference Semantics’.
 *R package version 2.5.0*. Retrieved from
@@ -162,7 +170,9 @@ Grimm, V., Revilla, E., Berger, U., Jeltsch, F., Mooij, W. M.,
 Railsback, S. F., Thulke, H. H., Weiner, J., Wiegand, T., DeAngelis, D.
 L., (2005). ‘Pattern-Oriented Modeling of Agent-Based Complex Systems:
 Lessons from Ecology’. *Science* vol. 310, no. 5750, pp. 987–991.
+<doi:10.1126/science.1116681>
 
 Iman R. L., Conover W. J. (1980). ‘Small sample sensitivity analysis
 techniques for computer models, with an application to risk assessment’.
 *Commun Stat Theor Methods* A9, pp. 1749–1842.
+<doi:10.1080/03610928008827996>

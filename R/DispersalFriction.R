@@ -15,7 +15,6 @@
 #' reducing the effective dispersal range.
 #'
 #' @examples
-#' \dontrun{
 #' #' U Island example region
 #' coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
 #'                           y = rep(seq(-18.01, -18.05, -0.01), each = 5))
@@ -41,11 +40,13 @@
 #'       multiplier = multipliers[[1]])
 #'
 #' #' Note that crossing the water is avoided.
-#' }
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar%
 #' @importFrom R6 R6Class
+#' @importFrom doParallel stopImplicitCluster
+#' @importFrom doParallel registerDoParallel
+#' @import gdistance
 #' @include Region.R
 #' @include SpatialModel.R
 #' @export DispersalFriction
@@ -116,15 +117,15 @@ DispersalFriction <- R6Class("DispersalFriction",
           # Calculate raster, transition matrix, then least cost distances for no friction
           no_friction_rast <- raster_region$region_raster
           no_friction_rast[] <- 1 # include NAs # [raster_region$region_indices] <- 1
-          no_friction_transitions <- gdistance::transition(no_friction_rast, transitionFunction = mean, directions = self$transition_directions)
-          no_friction_transitions <- gdistance::geoCorrection(no_friction_transitions, type = "c", scl = TRUE, multpl = FALSE)
-          no_friction_costs <- as.matrix(gdistance::costDistance(no_friction_transitions, as.matrix(self$coordinates)))
+          no_friction_transitions <- transition(no_friction_rast, transitionFunction = mean, directions = self$transition_directions)
+          no_friction_transitions <- geoCorrection(no_friction_transitions, type = "c", scl = TRUE, multpl = FALSE)
+          no_friction_costs <- as.matrix(costDistance(no_friction_transitions, as.matrix(self$coordinates)))
           no_friction_costs <- no_friction_costs[dispersal_indices]
           no_friction_transitions <- NULL # release from memory
         })
 
         # Calculate the (within range) distance multipliers for each time step in parallel
-        doParallel::registerDoParallel(cores = self$parallel_cores)
+        registerDoParallel(cores = self$parallel_cores)
         self <- self # Ensure that this object consistently becomes available within each parallel thread
         distance_multipliers <- foreach(i = 1:ncol(as.matrix(self$conductance[])),
                                         .packages = c("raster"),
@@ -137,9 +138,9 @@ DispersalFriction <- R6Class("DispersalFriction",
               conductance_rast <- raster_region$region_raster
               conductance_rast[raster_region$region_indices] <- self$conductance[, i]
             }
-            conductance_transitions <- gdistance::transition(conductance_rast, transitionFunction = mean, directions = self$transition_directions)
-            conductance_transitions <- gdistance::geoCorrection(conductance_transitions, type = "c", scl = TRUE, multpl = FALSE)
-            conductance_costs <- as.matrix(gdistance::costDistance(conductance_transitions, as.matrix(self$coordinates)))
+            conductance_transitions <- transition(conductance_rast, transitionFunction = mean, directions = self$transition_directions)
+            conductance_transitions <- geoCorrection(conductance_transitions, type = "c", scl = TRUE, multpl = FALSE)
+            conductance_costs <- as.matrix(costDistance(conductance_transitions, as.matrix(self$coordinates)))
             conductance_costs <- conductance_costs[dispersal_indices]
             conductance_transitions <- NULL # release from memory
           })
@@ -156,7 +157,7 @@ DispersalFriction <- R6Class("DispersalFriction",
       error = function(e){
         self$error_messages <- gsub("\n", "", as.character(e), fixed = TRUE)
       })
-      doParallel::stopImplicitCluster()
+      stopImplicitCluster()
 
       if (!is.null(self$error_messages)) {
         error_messages <- self$error_messages; self$error_messages <- NULL
