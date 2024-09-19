@@ -28,14 +28,30 @@ population_results(
 }
 \value{
 List of result functions:
-  \describe{
-    \item{\code{initialize_attributes = function())}}{Constructs and returns an initialized nested list for the selected result attributes.}
-    \item{\code{initialize_replicate = function(results)}}{Initializes and returns nested result attributes at the start of each replicate.}
-    \item{\code{calculate_at_timestep = function(r, tm, stage_abundance, harvested, results)}}{Appends and calculates (non-NULL) results and returns nested result attributes at the end of each time step (tm) within replicate (r).}
-    \item{\code{finalize_attributes = function(results)}}{Finalizes result calculations at the end of the simulation.}
-  }
+\describe{
+\item{\code{initialize_attributes = function())}}{Constructs and returns an initialized nested list for the selected result attributes.}
+\item{\code{initialize_replicate = function(results)}}{Initializes and returns nested result attributes at the start of each replicate.}
+\item{\code{calculate_at_timestep = function(r, tm, stage_abundance, harvested, results)}}{Appends and calculates (non-NULL) results and returns nested result attributes at the end of each time step (tm) within replicate (r).}
+\item{\code{finalize_attributes = function(results)}}{Finalizes result calculations at the end of the simulation.}
+}
 }
 \description{
 Modular functions for the population simulator for initializing, calculating and
 collecting simulator results.
+}
+\examples{
+coordinates <- array(c(1:4, 4:1), c(7, 2))
+initial_abundance <- matrix(c(
+  7, 13, 0, 26, 0, 39, 47,
+  2, 0, 6, 8, 0, 12, 13,
+  0, 3, 4, 6, 0, 9, 10
+), nrow = 3, ncol = 7, byrow = TRUE)
+results_selection <- c("abundance", "ema", "extirpation", 
+                        "extinction_location", "harvested", "occupancy")
+result_functions <- population_results(
+  replicates = 1, time_steps = 10, coordinates, initial_abundance,
+  results_selection = results_selection, result_stages = c(0, 1, 1)
+)
+result_functions$initialize_attributes()
+
 }

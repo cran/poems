@@ -7,6 +7,22 @@
 #' file, function and distribution templates, correlation parameters (for distribution
 #' generation), rounding decimals, occupancy mask, and any inherited class model
 #' attributes that need to be maintained when cloning.
+#' 
+#' @examples 
+#' gen_template <- GenerativeTemplate$new()
+#' gen_template$occupancy_mask <- array(c(1, 1, 0, 0, 1, 1, 1))
+#' gen_template$decimals <- 4
+#' gen_template$description <- "Test generator"
+#' 
+#' coordinates <- data.frame(x = c(1:4, 4:2), y = c(1, 1:4, 4:3))
+#'
+#' generator <- Generator$new(
+#'   region = Region$new(coordinates = coordinates), attr1 = 1,
+#'   template_attached = gen_template
+#' )
+#' generator$description
+#' generator$occupancy_mask
+#' generator$decimals
 #'
 #' @importFrom R6 R6Class
 #' @export GenerativeTemplate
@@ -28,7 +44,6 @@ GenerativeTemplate <- R6Class("GenerativeTemplate",
       self$function_templates <- list()
       self$distribution_templates <- list()
     }
-
   ), # end public
 
   private = list(
@@ -47,7 +62,6 @@ GenerativeTemplate <- R6Class("GenerativeTemplate",
     .generate_rasters = NULL,
     .decimals = NULL,
     .occupancy_mask = NULL
-
   ), # end private
 
   # Active binding accessors for private attributes (above) #
@@ -169,6 +183,5 @@ GenerativeTemplate <- R6Class("GenerativeTemplate",
         private$.occupancy_mask <- value
       }
     }
-
   ) # end active
 )

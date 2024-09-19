@@ -8,6 +8,15 @@
 generating or processing simulation results, as well as optionally generating values
 via generators.
 }
+\examples{
+generic_manager <- GenericManager$new(
+ attr1 = 22:23,
+ results_filename_attributes = c("attr1", "example")
+)
+generic_manager$get_results_filename(1)
+generic_manager$get_results_filename(2)
+
+}
 \section{Super class}{
 \code{\link[poems:GenericClass]{poems::GenericClass}} -> \code{GenericManager}
 }
@@ -105,7 +114,7 @@ Substitutes the specified sample details into a status message (using sprintf) a
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{status_message}}{Character string message with a \emph{\%s} placeholder for sample details.}
+\item{\code{status_message}}{Character string message with a placeholder for sample details.}
 
 \item{\code{sample_index}}{Row index of sample data frame containing details of substitution parameters.}
 }

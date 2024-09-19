@@ -5,7 +5,11 @@
 \title{R6 class representing a pattern-oriented validator.}
 \description{
 \code{\link[R6:R6Class]{R6}} class for pattern-oriented validation and simulation
-model ensemble selection. The class wraps functionality for the validation approach,
+model ensemble selection. Pattern-oriented validation is a statistical
+approach to compare patterns generated in simulations against observed
+empirical patterns.
+
+The class wraps functionality for the validation approach,
 typically utilizing an external library, the default being the approximate Bayesian
 computation (ABC) \code{\link[abc:abc]{abc}} library, and includes methods for
 resolving non-finite metrics, centering and scaling the validator inputs, running
@@ -13,18 +17,24 @@ the validator analysis, and generating diagnostics (see \code{\link[abc:abc]{abc
 }
 \examples{
 # Example parameter sample data
-sample_data <- data.frame(growth_rate_max = round(log(seq(1.11, 1.30, 0.01)), 3),
-                          harvest_rate = seq(0.11, 0.30, 0.01),
-                          initial_n = seq(105, 200, 5),
-                          density_max = seq(132, 170, 2))
+sample_data <- data.frame(
+  growth_rate_max = round(log(seq(1.11, 1.30, 0.01)), 3),
+  harvest_rate = seq(0.11, 0.30, 0.01),
+  initial_n = seq(105, 200, 5),
+  density_max = seq(132, 170, 2)
+)
 # Example simulation result summary metrics
-summary_metric_data <- data.frame(trend_n = seq(10, -9, -1),
-                                  total_h = seq(70, 355, 15))
+summary_metric_data <- data.frame(
+  trend_n = seq(10, -9, -1),
+  total_h = seq(70, 355, 15)
+)
 # Create a validator for selecting the 'best' example models
-validator <- Validator$new(simulation_parameters = sample_data,
-                           simulation_summary_metrics = summary_metric_data,
-                           observed_metric_targets = c(trend_n = 0, total_h = 250),
-                           output_dir = tempdir())
+validator <- Validator$new(
+  simulation_parameters = sample_data,
+  simulation_summary_metrics = summary_metric_data,
+  observed_metric_targets = c(trend_n = 0, total_h = 250),
+  output_dir = tempdir()
+)
 suppressWarnings(validator$run(tolerance = 0.25, output_diagnostics = TRUE))
 dir(tempdir(), "*.pdf") # plus validation diagnostics (see abc library documentation)
 validator$selected_simulations # top 5 models

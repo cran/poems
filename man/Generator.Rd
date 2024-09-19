@@ -12,55 +12,75 @@ functions, generating sample distributions, or built-in functions (assigned as
 }
 \examples{
 # U Island example region
-coordinates <- data.frame(x = rep(seq(177.01, 177.05, 0.01), 5),
-                          y = rep(seq(-18.01, -18.05, -0.01), each = 5))
-coordinates <- coordinates[c(7, 9, 12, 14, 17:19),]
+coordinates <- data.frame(
+  x = rep(seq(177.01, 177.05, 0.01), 5),
+  y = rep(seq(-18.01, -18.05, -0.01), each = 5)
+)
+coordinates <- coordinates[c(7, 9, 12, 14, 17:19), ]
 region <- Region$new(coordinates = coordinates, use_raster = FALSE)
 # Spatial correlation
-spatial_correlation <- SpatialCorrelation$new(region = region, correlation_amplitude = 0.6,
-                                              correlation_breadth = 300)
+spatial_correlation <- SpatialCorrelation$new(
+  region = region, correlation_amplitude = 0.6,
+  correlation_breadth = 300
+)
 spatial_correlation$calculate_compact_decomposition(decimals = 4)
 # Example habitat suitability in file
-saveRDS(array(c(0.5, 0.3, 0.7, 0.9, 0.6, 0.7, 0.8), c(7, 5)),
-        file.path(tempdir(), "hs_mean_1.RData"))
+saveRDS(
+  array(c(0.5, 0.3, 0.7, 0.9, 0.6, 0.7, 0.8), c(7, 5)),
+  file.path(tempdir(), "hs_mean_1.RData")
+)
 # Generator
-capacity_gen <- Generator$new(description = "capacity",
-                              region = region,
-                              time_steps = 5,
-                              spatial_correlation = spatial_correlation,
-                              temporal_correlation = 0.9,
-                              hs_sd = 0.1, # template attached
-                              inputs = c("hs_file", "density_max", "initial_n"),
-                              outputs = c("initial_abundance", "carrying_capacity"))
-capacity_gen$add_generative_requirements(list(hs_mean = "file",
-                                              hs_sample = "distribution",
-                                              carrying_capacity = "function",
-                                              initial_abundance = "function"))
+capacity_gen <- Generator$new(
+  description = "capacity",
+  region = region,
+  time_steps = 5,
+  spatial_correlation = spatial_correlation,
+  temporal_correlation = 0.9,
+  hs_sd = 0.1, # template attached
+  inputs = c("hs_file", "density_max", "initial_n"),
+  outputs = c("initial_abundance", "carrying_capacity")
+)
+capacity_gen$add_generative_requirements(list(
+  hs_mean = "file",
+  hs_sample = "distribution",
+  carrying_capacity = "function",
+  initial_abundance = "function"
+))
 # File template for mean habitat suitability
 capacity_gen$add_file_template("hs_mean",
-                               path_template = file.path(tempdir(), "hs_mean_\%s.RData"),
-                               path_params = c("hs_file"), file_type = "RDS")
+  path_template = file.path(tempdir(), "hs_mean_\%s.RData"),
+  path_params = c("hs_file"), file_type = "RDS"
+)
 # Distribution template for sampling habitat suitability
 capacity_gen$add_distribution_template("hs_sample",
-                                       distr_type = "beta",
-                                       distr_params = list(mean = "hs_mean",
-                                                           sd = "hs_sd"))
+  distr_type = "beta",
+  distr_params = list(
+    mean = "hs_mean",
+    sd = "hs_sd"
+  )
+)
 # Function templates for initial abundance and carrying capacity
 capacity_gen$add_function_template("initial_abundance",
-                                   function_def = function(params) {
-                                     stats::rmultinom(1, size = params$initial_n,
-                                                      prob = params$hs_sample[,1])
-                                   },
-                                   call_params = c("initial_n", "hs_sample"))
+  function_def = function(params) {
+    stats::rmultinom(1,
+      size = params$initial_n,
+      prob = params$hs_sample[, 1]
+    )
+  },
+  call_params = c("initial_n", "hs_sample")
+)
 capacity_gen$add_function_template("carrying_capacity",
-                                   function_def = function(params) {
-                                     round(params$density_max*params$hs_sample)
-                                   },
-                                   call_params = c("density_max", "hs_sample"))
+  function_def = function(params) {
+    round(params$density_max * params$hs_sample)
+  },
+  call_params = c("density_max", "hs_sample")
+)
 # Generation
-capacity_gen$generate(input_values = list(hs_file = 1,
-                                          initial_n = 400,
-                                          density_max = 100))
+capacity_gen$generate(input_values = list(
+  hs_file = 1,
+  initial_n = 400,
+  density_max = 100
+))
 
 }
 \section{Super classes}{
@@ -235,7 +255,8 @@ List containing generated model output attributes and/or any error/warning messa
 \if{html}{\out{<a id="method-Generator-add_file_template"></a>}}
 \if{latex}{\out{\hypertarget{method-Generator-add_file_template}{}}}
 \subsection{Method \code{add_file_template()}}{
-Adds a file template for reading raster/RData(RDS)/CSV files for a given model attribute.
+Adds a file template for reading raster/RData(RDS)/CSV files for a given
+model attribute.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Generator$add_file_template(
   param,
@@ -250,11 +271,14 @@ Adds a file template for reading raster/RData(RDS)/CSV files for a given model a
 \describe{
 \item{\code{param}}{Name of model attribute to be read from a file.}
 
-\item{\code{path_template}}{Template string for the file path with \emph{\%s} placeholders (see \code{\link{sprintf}}) for simulation sample parameters.}
+\item{\code{path_template}}{Template string for the file path with placeholders
+(see \code{\link{sprintf}}) for simulation sample parameters.}
 
-\item{\code{path_params}}{Array of the names of the simulation sample parameters to be substituted (in order) into the path template.}
+\item{\code{path_params}}{Array of the names of the simulation sample
+parameters to be substituted (in order) into the path template.}
 
-\item{\code{file_type}}{File type raster \emph{"GRD"} (default), \emph{"RData/RDS"} or \emph{"CSV"} to be read.}
+\item{\code{file_type}}{File type raster \emph{"GRD"} (default), \emph{"TIF"},
+\emph{"RData/RDS"}, \emph{"QS"}, or \emph{"CSV"} to be read.}
 }
 \if{html}{\out{</div>}}
 }
