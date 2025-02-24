@@ -1,6 +1,6 @@
-2a1bf18fbfe24bfadf6bda91d476c474 *DESCRIPTION
+14a0712c523e5fa4fe026ffda6601974 *DESCRIPTION
 9615840e5c8a89a8b0683b39c365abd6 *NAMESPACE
-bf96a62ea3497c7e6b872d13f7cca32b *NEWS.md
+04a6f6b9116341017c3b9314dedd9e2e *NEWS.md
 7c753fda30373c65fac2fac071b1f036 *R/DispersalFriction.R
 76670b2cf9b5bb9378972b026a475430 *R/DispersalGenerator.R
 2f23f8c9b4224baca2ed5e0c7a3c271b *R/DispersalTemplate.R
@@ -31,7 +31,7 @@ ad24e80b85aad07f8131c0d9e506dfec *R/population_env_stoch.R
 2921e51def06285d3b97c1946bc0dfb4 *R/population_simulator.R
 7f115d7ddc983b2083fd450c4ae498a7 *R/population_transformation.R
 afd80f2d54288fb4cd4094142ce487eb *R/population_transitions.R
-8de02f801f8b4d5adcd759f374b83d5f *README.md
+997d28502d7d2681df64c04e62750d88 *README.md
 aa5e5a2cbfaea3d9b6cdbe378ac48cee *build/partial.rdb
 d20b4419493a26757a6414fbc61ee10f *build/vignette.rds
 3ca6653b27391c7d3d9f4390d201e721 *data/tasmania_ibra_data.rda
@@ -53,7 +53,7 @@ b22e2f01b31ae4ff7e7eb085e9d11017 *inst/CITATION
 1bf1da0d178aac154bb300f4ed3c86d8 *inst/doc/thylacine_example.pdf
 53197b1143bae6b3a504150a64f8577c *inst/doc/translocation_example.R
 ca42e3debb57a1c5fb0378c8ec6c9eaa *inst/doc/translocation_example.Rmd
-d0974fc0b242b09cf66a1062f6cb0a8b *inst/doc/translocation_example.pdf
+dab1c551cb171ef18ba9252a1c0fc2cf *inst/doc/translocation_example.pdf
 852c9c6ffc1c0e08d860ee5e3ac85c84 *man/DispersalFriction.Rd
 f5215ff00441fdc44d6f31cc78e2b5f0 *man/DispersalGenerator.Rd
 56d34947f9b9024b80d767ffab15dcb6 *man/DispersalTemplate.Rd
@@ -76,7 +76,7 @@ af2a8eddd165cacc4b50b94e60b170ea *man/SimulationManager.Rd
 73568b3ca8d6f4dc1dc1ca24e2c8c8b9 *man/SpatialModel.Rd
 cff3fefe9c68e7be23d1dd15d4edbf39 *man/Validator.Rd
 0f06223726586310d562d779c596a0bf *man/figures/README-example-1.png
-b76bd41ba2c45c4304c7c926f0cb4e8e *man/figures/README-example-2.png
+cf44390a090d77d3b334a73de719ae20 *man/figures/README-example-2.png
 d9b08477cc9cc1358fc8cd4359b0f39e *man/figures/framework.pdf
 a8f86c5208febece96f123c6967bfae4 *man/figures/framework.png
 076021beefeb90462c46a5b9304e88a9 *man/figures/logo.svg
@@ -138,7 +138,7 @@ bf7c243ded398116cdf2640e26f5d2e1 *tests/testthat/test_results/raster/sample_3_ra
 2add7e377ee1758aa50bd3c52033ad21 *tests/testthat/test_results/sample_1_results.RData
 9c100c1e040c961172f84291157ff2bf *tests/testthat/test_results/sample_2_results.RData
 0068c0daaf076a21eacda91ea5b4a6a0 *tests/testthat/test_results/sample_3_results.RData
-b2f8aa638ac36e210c20627ff0562991 *tests/testthat/test_results_manager.R
+135a8b663dc337e5777c740c88d3a790 *tests/testthat/test_results_manager.R
 646489a7388db633f7dd198f2a330cea *tests/testthat/test_simulation_manager.R
 1d55cad35842913dc813473b45decd8f *tests/testthat/test_simulation_model.R
 4b2a34d735778a6b126b6a7dedecc7ca *tests/testthat/test_simulation_results.R
@@ -147,9 +147,9 @@ f55c4e9d9444ebae3267ecd0e43f4c2e *tests/testthat/test_spatial_correlation.R
 22a858ca3c68ce898239671b3a6c9045 *tests/testthat/test_spatial_model.R
 183dddc38cb5b969eb83a6d7dd6ee1c2 *tests/testthat/test_validator.R
 57cdfdef4795afef077d4980206f89b5 *vignettes/simple_example.Rmd
-070000322004dd74c9baf58af9c66ed0 *vignettes/simple_example.html
+31b322d34bb96ab49762ff2eb0d071f7 *vignettes/simple_example.html
 1754d8dae87eb18e0b6f105c2b7df7e3 *vignettes/thylacine_example.Rmd
-39683d04304e5411a9f15a8e4b74bc4b *vignettes/thylacine_example.html
+ec7ee216144f1b706ebd76e72d2c14f4 *vignettes/thylacine_example.html
 ca42e3debb57a1c5fb0378c8ec6c9eaa *vignettes/translocation_example.Rmd
 c91b073141bbab6dfcbaf542933fc001 *vignettes/unnamed-chunk-10-1.png
 df6ffa722784ed4feb6cc9d3b2ab0bfa *vignettes/unnamed-chunk-11-1.png
