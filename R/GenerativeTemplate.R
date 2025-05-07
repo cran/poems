@@ -7,13 +7,13 @@
 #' file, function and distribution templates, correlation parameters (for distribution
 #' generation), rounding decimals, occupancy mask, and any inherited class model
 #' attributes that need to be maintained when cloning.
-#' 
-#' @examples 
+#'
+#' @examples
 #' gen_template <- GenerativeTemplate$new()
 #' gen_template$occupancy_mask <- array(c(1, 1, 0, 0, 1, 1, 1))
 #' gen_template$decimals <- 4
 #' gen_template$description <- "Test generator"
-#' 
+#'
 #' coordinates <- data.frame(x = c(1:4, 4:2), y = c(1, 1:4, 4:3))
 #'
 #' generator <- Generator$new(
@@ -27,9 +27,9 @@
 #' @importFrom R6 R6Class
 #' @export GenerativeTemplate
 
-GenerativeTemplate <- R6Class("GenerativeTemplate",
+GenerativeTemplate <- R6Class(
+  "GenerativeTemplate",
   public = list(
-
     ## Attributes ##
 
     #' @field attached A list of dynamically attached attributes (name-value pairs).
@@ -47,7 +47,6 @@ GenerativeTemplate <- R6Class("GenerativeTemplate",
   ), # end public
 
   private = list(
-
     ## Attributes ##
     .description = NULL,
     .inputs = NULL,
@@ -66,7 +65,6 @@ GenerativeTemplate <- R6Class("GenerativeTemplate",
 
   # Active binding accessors for private attributes (above) #
   active = list(
-
     #' @field description A brief description of what the generator generates.
     description = function(value) {
       if (missing(value)) {

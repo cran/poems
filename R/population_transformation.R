@@ -3,8 +3,8 @@
 #' Modular functions for the population simulator for performing a transformation of
 #' the stage abundance (and optionally carrying capacity) at a specified time step via
 #' a user-defined function.
-#' 
-#' @examples 
+#'
+#' @examples
 #' simulator <- SimulatorReference$new()
 #' # Example transformation: a random population is chosen for a severe disturbance event
 #' # (only life cycle stage 3 individuals survive)
@@ -24,13 +24,15 @@
 #' carrying_capacity <- rep(10, 7)
 #' carrying_capacity <- rep(10, 7)
 #' stage_abundance <- matrix(c(
-#'  7, 13, 0, 26, 0, 39, 47,
-#'  2, 0, 6, 8, 0, 12, 13,
-#'  0, 3, 4, 6, 0, 9, 10
+#'   7, 13, 0, 26, 0, 39, 47,
+#'   2, 0, 6, 8, 0, 12, 13,
+#'   0, 3, 4, 6, 0, 9, 10
 #' ), nrow = 3, ncol = 7, byrow = TRUE)
 #' occupied_indices <- (1:7)[-5]
-#' transformation_function(r = 2, tm = 6, carrying_capacity, stage_abundance,
-#'                         occupied_indices)
+#' transformation_function(
+#'   r = 2, tm = 6, carrying_capacity, stage_abundance,
+#'   occupied_indices
+#' )
 #'
 #' @param replicates Number of replicate simulation runs.
 #' @param time_steps Number of simulation time steps.
@@ -69,15 +71,17 @@
 #'   }
 #' @export population_transformation
 
-population_transformation <- function(replicates,
-                                      time_steps,
-                                      years_per_step,
-                                      populations,
-                                      demographic_stochasticity,
-                                      density_stages,
-                                      transformation,
-                                      simulator,
-                                      name = "transformation") {
+population_transformation <- function(
+  replicates,
+  time_steps,
+  years_per_step,
+  populations,
+  demographic_stochasticity,
+  density_stages,
+  transformation,
+  simulator,
+  name = "transformation"
+) {
   if (!is.null(transformation)) {
     # Derive stages
     stages <- length(density_stages)
@@ -93,17 +97,29 @@ population_transformation <- function(replicates,
     # List of parameters to pass to the user-defined function
     params <- c(
       list(
-        replicates = replicates, time_steps = time_steps, years_per_step = years_per_step,
-        populations = populations, stages = stages, demographic_stochasticity = demographic_stochasticity,
-        density_stages = density_stages, simulator = simulator
+        replicates = replicates,
+        time_steps = time_steps,
+        years_per_step = years_per_step,
+        populations = populations,
+        stages = stages,
+        demographic_stochasticity = demographic_stochasticity,
+        density_stages = density_stages,
+        simulator = simulator
       ),
       additional_attributes
     )
 
-    if (is.function(transformation)) { # user-defined function
+    if (is.function(transformation)) {
+      # user-defined function
 
       ## Create a nested function for applying user-defined transformation to stage abundance ##
-      user_defined_function <- function(r, tm, carrying_capacity, stage_abundance, occupied_indices) {
+      user_defined_function <- function(
+        r,
+        tm,
+        carrying_capacity,
+        stage_abundance,
+        occupied_indices
+      ) {
         # Add attributes to be made available to the user-defined function
         params$r <- r
         params$tm <- tm
@@ -117,35 +133,99 @@ population_transformation <- function(replicates,
             transformed <- transformation(params)
           },
           error = function(e) {
-            stop(paste("Error produced within user-defined", name, "function:", as.character(e)), call. = FALSE)
+            stop(
+              paste(
+                "Error produced within user-defined",
+                name,
+                "function:",
+                as.character(e)
+              ),
+              call. = FALSE
+            )
           }
         )
 
         # Resolve and check returned transformed values
         if (is.list(transformed)) {
-          if (!all(c("stage_abundance", "carrying_capacity") %in% names(transformed))) {
-            stop(paste(
-              "When returning a list, the user-defined", name,
-              "function should contain stage_abundance and carrying_capacity"
-            ), call. = FALSE)
+          if (
+            !all(
+              c("stage_abundance", "carrying_capacity") %in% names(transformed)
+            )
+          ) {
+            stop(
+              paste(
+                "When returning a list, the user-defined",
+                name,
+                "function should contain stage_abundance and carrying_capacity"
+              ),
+              call. = FALSE
+            )
           }
-        } else { # assume stage abundance matrix and place a list
+        } else {
+          # assume stage abundance matrix and place a list
           transformed <- list(stage_abundance = transformed)
         }
 
         # Warn if any negative or non-finite
         if (any(!is.finite(transformed$stage_abundance))) {
-          warning(paste("Non-finite stage abundances returned by user-defined", name, "function"), call. = FALSE)
+          warning(
+            paste(
+              "Non-finite stage abundances returned by user-defined",
+              name,
+              "function"
+            ),
+            call. = FALSE
+          )
         }
-        if ("carrying_capacity" %in% names(transformed) && any(!is.finite(transformed$carrying_capacity))) {
-          warning(paste("Non-finite carrying capacities returned by user-defined", name, "function"), call. = FALSE)
+        if (
+          "carrying_capacity" %in%
+            names(transformed) &&
+            any(!is.finite(transformed$carrying_capacity))
+        ) {
+          warning(
+            paste(
+              "Non-finite carrying capacities returned by user-defined",
+              name,
+              "function"
+            ),
+            call. = FALSE
+          )
         }
-        if (any(transformed$stage_abundance[which(is.finite(transformed$stage_abundance))] < 0)) {
-          warning(paste("Negative stage abundances returned by user-defined", name, "function"), call. = FALSE)
+        if (
+          any(
+            transformed$stage_abundance[which(is.finite(
+              transformed$stage_abundance
+            ))] <
+              0
+          )
+        ) {
+          warning(
+            paste(
+              "Negative stage abundances returned by user-defined",
+              name,
+              "function"
+            ),
+            call. = FALSE
+          )
         }
-        if ("carrying_capacity" %in% names(transformed) &&
-          any(transformed$carrying_capacity[which(is.finite(transformed$carrying_capacity))] < 0)) {
-          warning(paste("Negative carrying capacities returned by user-defined", name, "function"), call. = FALSE)
+        if (
+          "carrying_capacity" %in%
+            names(transformed) &&
+            any(
+              transformed$carrying_capacity[which(is.finite(
+                transformed$carrying_capacity
+              ))] <
+                0
+            )
+        ) {
+          warning(
+            paste(
+              "Negative carrying capacities returned by user-defined",
+              name,
+              "function"
+            ),
+            call. = FALSE
+          )
         }
 
         return(transformed)
